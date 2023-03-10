@@ -31,3 +31,29 @@ b-expr : b-sum
 b-sum : b-number ("+" b-number)*
 b-number : INTEGER | DECIMAL
 ```
+
+## Usage 
+
+### Installing the package
+
+- This requires [racket](https://download.racket-lang.org/)
+- Clone this repository and `cd` into the `basic` directory
+- Run `raco pkg install`
+
+### Testing
+
+Once the package is installed, the following programs can be run using `#lang basic`. 
+
+#### [sample](tests/sample.rkt)
+
+```
+#lang basic
+30 rem print 'ignored'
+35
+50 print "never gets here"
+40 end
+60 print 'three' : print 1.0 + 3
+70 goto 11. + 18.5 + .5 rem ignored
+10 print "o" ; "n" ; "e"
+20 print : goto 60.0 : end
+```
