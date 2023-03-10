@@ -1,8 +1,7 @@
 # basic
 
-This is an implementation of an idealized version of the BASIC programming language. 
-
-This is part of the excellent book [Beautiful Racket](https://beautifulracket.com/basic). 
+An implementation of an idealized version of the BASIC programming language. 
+This is a project from the excellent book [Beautiful Racket](https://beautifulracket.com/basic). 
 
 ## Requirements
 
