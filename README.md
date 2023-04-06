@@ -3,33 +3,76 @@
 An implementation of an idealized version of the BASIC programming language. 
 This is a project from the excellent book [Beautiful Racket](https://beautifulracket.com/basic). 
 
-## Requirements
+## Features 
 
-From [Beautiful Racket](https://beautifulracket.com/basic/specification.html):
+### Basic Methods
 
+#### [sample](tests/sample.rkt)
 
-> - `print` takes a string, number, or numer­ical expres­sion as input and displays it, followed by a newline. A list of print­able items can be sepa­rated by semi­colons `;` and the results will be concatenated. If `print` gets no input, it displays a blank line.
-> - `goto` takes a number or numer­ical expres­sion as input, and imme­di­ately jumps to that line of the program.
-> - `rem` starts a line comment. Anything between the rem and the next newline is ignored. Even if the rem is at the begin­ning, the line can still be the target of a goto.
-> - `end` imme­di­ately aborts the program.
+- `print`
+- `goto`
+-  `rem` 
+- `end`
+
+### Variables, Expressions, & Conditionals
+
+- [variables](tests/variables.rkt)
+- [expressions](tests/expressions.rkt)
+- [conditionals](tests/conditionals.rkt)
+
+### Functions, Import, Export, REPL, & Command Line Arguments 
+
+- [functions](tests/functions.rkt)
+- [import](tests/sample-importer.rkt)
+- [export](tests/sample-exporter.rkt)
+- [repl](tests/repl-test.rkt)
+- [args](tests/report-args.rkt)
 
 ## Grammar
 
 The grammar for this language, in Extended Backus–Naur form is as follows:
 
-```
-b-program : [b-line] (NEWLINE [b-line])*
-b-line : b-line-num [b-statement] (":" [b-statement])* [b-rem]
-b-line-num : INTEGER
-b-statement : b-end | b-print | b-goto
+```racket
+#lang brag
+b-program : [b-line] (/NEWLINE [b-line])*
+b-line : b-line-num [b-statement] (/":" [b-statement])* [b-rem]
+@b-line-num : INTEGER
 b-rem : REM
-b-end : "end"
-b-print : "print" [b-printable] (";" [b-printable])*
-b-printable : STRING | b-expr
-b-goto : "goto" b-expr
-b-expr : b-sum
-b-sum : b-number ("+" b-number)*
-b-number : INTEGER | DECIMAL
+@b-statement : b-end | b-print | b-goto
+             | b-let | b-input | b-if
+             | b-gosub | b-return | b-for | b-next
+             | b-def | b-import | b-export
+b-end : /"end"
+b-print : /"print" [b-printable] (/";" [b-printable])*
+@b-printable : STRING | b-expr
+b-goto : /"goto" b-expr
+b-let : [/"let"] b-id /"=" (STRING | b-expr)
+b-if : /"if" b-expr /"then" (b-statement | b-expr)
+                   [/"else" (b-statement | b-expr)]
+b-input : /"input" b-id
+@b-id : ID
+b-gosub : /"gosub" b-expr
+b-return : /"return"
+b-for : /"for" b-id /"=" b-expr /"to" b-expr [/"step" b-expr]
+b-next : /"next" b-id
+b-def : /"def" b-id /"(" b-id [/"," b-id]* /")" /"=" b-expr
+b-import : /"import" b-import-name
+@b-import-name : RACKET-ID | STRING
+b-export : /"export" b-export-name
+@b-export-name : ID
+b-expr : b-or-expr
+b-or-expr : [b-or-expr "or"] b-and-expr
+b-and-expr : [b-and-expr "and"] b-not-expr
+b-not-expr : ["not"] b-comp-expr
+b-comp-expr : [b-comp-expr ("="|"<"|">"|"<>")] b-sum
+b-sum : [b-sum ("+"|"-")] b-product
+b-product : [b-product ("*"|"/"|"mod")] b-neg
+b-neg : ["-"] b-expt
+b-expt : [b-expt ("^")] b-value
+@b-value : b-number | b-id | /"(" b-expr /")" | b-func
+b-func : ID /"(" b-expr [/"," b-expr]* /")"
+@b-number : INTEGER | DECIMAL
+b-repl : (b-statement | b-expr) (/":" [@b-repl])*
 ```
 
 ## Usage 
@@ -40,20 +83,3 @@ b-number : INTEGER | DECIMAL
 - Clone this repository and `cd` into the `basic` directory
 - Run `raco pkg install`
 
-### Testing
-
-Once the package is installed, the following programs can be run using `#lang basic`. 
-
-#### [sample](tests/sample.rkt)
-
-```
-#lang basic
-30 rem print 'ignored'
-35
-50 print "never gets here"
-40 end
-60 print 'three' : print 1.0 + 3
-70 goto 11. + 18.5 + .5 rem ignored
-10 print "o" ; "n" ; "e"
-20 print : goto 60.0 : end
-```
