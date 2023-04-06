@@ -1,25 +1,24 @@
-#lang br/quicklang
-(require "struct.rkt" "run.rkt" "elements.rkt")
-(provide (rename-out [b-module-begin #%module-begin])
-         (all-from-out "elements.rkt"))
+#lang br
+(provide b-expr b-sum b-product b-neg b-expt)
 
-(define-macro (b-module-begin (b-program LINE ...))
-  (with-pattern
-      ([((b-line NUM STMT ...) ...) #'(LINE ...)]
-       [(LINE-FUNC ...) (prefix-id "line-" #'(NUM ...))]
-       [(VAR-ID ...) (find-unique-var-ids #'(LINE ...))])
-    #'(#%module-begin
-       (define VAR-ID 0) ...
-       LINE ...
-       (define line-table
-         (apply hasheqv (append (list NUM LINE-FUNC) ...)))
-       (void (run line-table)))))
+(define (b-expr expr)
+  (if (integer? expr) (inexact->exact expr) expr))
 
-(begin-for-syntax
-  (require racket/list)
-  (define (find-unique-var-ids line-stxs)
-    (remove-duplicates
-     (for/list ([stx (in-list (stx-flatten line-stxs))]
-                #:when (syntax-property stx 'b-id))
-       stx)
-     #:key syntax->datum)))
+(define-macro-cases b-sum
+  [(_ VAL) #'VAL]
+  [(_ LEFT "+" RIGHT) #'(+ LEFT RIGHT)]
+  [(_ LEFT "-" RIGHT) #'(- LEFT RIGHT)])
+
+(define-macro-cases b-product
+  [(_ VAL) #'VAL]
+  [(_ LEFT "*" RIGHT) #'(* LEFT RIGHT)]
+  [(_ LEFT "/" RIGHT) #'(/ LEFT RIGHT 1.0)]
+  [(_ LEFT "mod" RIGHT) #'(modulo LEFT RIGHT)])
+
+(define-macro-cases b-neg
+  [(_ VAL) #'VAL]
+  [(_ "-" VAL) #'(- VAL)])
+
+(define-macro-cases b-expt
+  [(_ VAL) #'VAL]
+  [(_ LEFT "^" RIGHT) #'(expt LEFT RIGHT)])
