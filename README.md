@@ -39,7 +39,7 @@ This is a project from the excellent book [Beautiful Racket](https://beautifulra
 
 ## Grammar
 
-The grammar for this language, in Extended Backus–Naur form is as follows:
+The grammar for this language, in Extended Backus–Naur (ish) form is as follows:
 
 ```racket
 #lang brag
