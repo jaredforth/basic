@@ -3,6 +3,15 @@
 An implementation of an idealized version of the BASIC programming language. 
 This is a project from the excellent book [Beautiful Racket](https://beautifulracket.com/basic). 
 
+
+## Usage 
+
+### Installing the package
+
+- This requires [racket](https://download.racket-lang.org/)
+- Clone this repository and `cd` into the `basic` directory
+- Run `raco pkg install`
+
 ## Features 
 
 ### Basic Methods
@@ -74,12 +83,3 @@ b-func : ID /"(" b-expr [/"," b-expr]* /")"
 @b-number : INTEGER | DECIMAL
 b-repl : (b-statement | b-expr) (/":" [@b-repl])*
 ```
-
-## Usage 
-
-### Installing the package
-
-- This requires [racket](https://download.racket-lang.org/)
-- Clone this repository and `cd` into the `basic` directory
-- Run `raco pkg install`
-
